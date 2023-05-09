@@ -1,0 +1,47 @@
+﻿@page "/superrecettes"
+@inject ISuperRecetteService SuperRecetteService
+@inject NavigationManager NavigationManager
+
+<h3>SuperRecettes</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Ingredient</th>
+            <th>Description</th>            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recette in SuperRecetteService.Recettes)
+        {
+            <tr>
+                <td>@recette.Name</td>
+                <td>@recette.Ingredient</td>
+                <td>@recette.Description</td>                
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowRecette(recette.Id))"><i class="oi oi-pencil"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewRecette">Create New Recette</button>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await SuperRecetteService.GetSuperRecettes();
+    }
+
+    void ShowRecette(int id)
+    {
+        NavigationManager.NavigateTo($"recette/{id}");
+    }
+
+    void CreateNewRecette()
+    {
+        NavigationManager.NavigateTo("/recette");
+    }
+}

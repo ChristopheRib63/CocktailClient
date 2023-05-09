@@ -1,0 +1,86 @@
+﻿@page "/recette"
+@page "/recette/{id:int}"
+@inject ISuperRecetteService SuperRecetteService
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Super Recette</PageTitle>
+    <h3>Create a new Super Recette</h3>
+}
+else
+{
+    <PageTitle>Edit @recette.Name</PageTitle>
+    <h3>Edit @recette.Name</h3>
+}
+
+<EditForm Model="recette" OnSubmit="HandleSubmit">
+    <div>
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="recette.Name" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="ingredient">Ingredient</label>
+        <InputText id="ingredient" @bind-Value="recette.Ingredient" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="recette.Description" class="form-control"></InputText>
+    </div>
+    <div>
+        <label>Alcool</label><br />
+        <InputSelect @bind-Value="recette.AlcoolId" class="form-select">
+            @foreach (var alcool in SuperRecetteService.Alcools)
+            {
+                <option value="@alcool.Id">@alcool.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    <button type="button" class="btn btn-danger" @onclick="DeleteRecette">Delete Recette</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    SuperRecette recette = new SuperRecette { Alcool = new Alcool() };
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = Id == null ? "Save New Recette" : "Update Recette";
+        await SuperRecetteService.GetAlcools();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            recette.Alcool = SuperRecetteService.Alcools[0];
+            recette.AlcoolId = recette.Alcool.Id;
+        }
+        else
+        {
+            recette = await SuperRecetteService.GetSingleRecette((int)Id);
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id == null)
+        {
+            await SuperRecetteService.CreateRecette(recette);
+        }
+        else
+        {
+            await SuperRecetteService.UpdateRecette(recette);
+        }
+    }
+
+    async Task DeleteRecette()
+    {
+        await SuperRecetteService.DeleteRecette(recette.Id);
+    }
+}
