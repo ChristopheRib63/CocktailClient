@@ -20,7 +20,7 @@ namespace CocktailClient.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<SuperRecette>>> GetSuperRecettes()
         {
-            var recettes = await _context.SuperRecettes.Include(sh => sh.Alcool).ToListAsync();
+            var recettes = await _context.SuperRecettes.Include(sr => sr.Alcool).ToListAsync();
             return Ok(recettes);
         }
 
@@ -35,8 +35,8 @@ namespace CocktailClient.Server.Controllers
         public async Task<ActionResult<SuperRecette>> GetSingleRecette(int id)
         {
             var recette = await _context.SuperRecettes
-                .Include(h => h.Alcool)
-                .FirstOrDefaultAsync(h => h.Id == id);
+                .Include(r => r.Alcool)
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (recette == null)
             {
                 return NotFound("Sorry, no recette here. :/");
@@ -58,8 +58,8 @@ namespace CocktailClient.Server.Controllers
         public async Task<ActionResult<List<SuperRecette>>> UpdateSuperRecette(SuperRecette recette, int id)
         {
             var dbRecette = await _context.SuperRecettes
-                .Include(sh => sh.Alcool)
-                .FirstOrDefaultAsync(sh => sh.Id == id);
+                .Include(sr => sr.Alcool)
+                .FirstOrDefaultAsync(sr => sr.Id == id);
             if (dbRecette == null)
                 return NotFound("Sorry, but no recette for you. :/");
 
@@ -77,8 +77,8 @@ namespace CocktailClient.Server.Controllers
         public async Task<ActionResult<List<SuperRecette>>> DeleteSuperRecette(int id)
         {
             var dbRecette = await _context.SuperRecettes
-                .Include(sh => sh.Alcool)
-                .FirstOrDefaultAsync(sh => sh.Id == id);
+                .Include(sr => sr.Alcool)
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (dbRecette == null)
                 return NotFound("Sorry, but no recette for you. :/");
 
@@ -90,7 +90,7 @@ namespace CocktailClient.Server.Controllers
 
         private async Task<List<SuperRecette>> GetDbRecettes()
         {
-            return await _context.SuperRecettes.Include(sh => sh.Alcool).ToListAsync();
+            return await _context.SuperRecettes.Include(sr => sr.Alcool).ToListAsync();
         }
     }
 }
